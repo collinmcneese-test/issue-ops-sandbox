@@ -1,0 +1,15 @@
+name: Blank Issue
+description: Don't see a matching issue? Open a blank issue.
+
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for submitting an issue! Please fill out the following information to get started.
+
+- type: input
+  attributes:
+    label: What can we help you with?
+    description: Describe the current issue context
+  validations:
+    required: true

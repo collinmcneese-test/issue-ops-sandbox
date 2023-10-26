@@ -1,0 +1,33 @@
+name: Deploy 🚀
+description: Run a deployment
+title: "[Deploy] <title>"
+labels: ["Deploy"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for submitting a deploy request! Please fill out the following information to get started.
+      After submitting, there will be follow-up questions to complete the request, if necessary.
+
+- type: checkboxes
+  attributes:
+    label: Environments
+    description: The environment(s) to deploy to
+    options:
+      - label: Production
+      - label: Staging
+      - label: Development
+
+- type: input
+  attributes:
+    label: Version
+    description: The version or branch to deploy (uses default ref if empty)
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Notes
+    description: Any additional notes
+  validations:
+    required: false

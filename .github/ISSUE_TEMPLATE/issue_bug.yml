@@ -1,0 +1,31 @@
+name: Bug 🐛
+description: Report a bug
+title: "[Bug] <title>"
+labels: ["Bug"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for submitting a Bug report! Please fill out the following information to get started.
+
+- type: input
+  attributes:
+    label: What is the current behavior?
+    description: Describe the current behavior
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: What is the expected behavior?
+    description: Describe the expected behavior
+  validations:
+    required: true
+
+- type: checkboxes
+  attributes:
+    label: Agree to Code of Conduct?
+    description: By submitting this issue, you agree to abide by the Code of Conduct defined in the [Contributing Guidelines](#) document.
+    options:
+      - label: I agree
+        required: true
