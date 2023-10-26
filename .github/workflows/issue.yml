@@ -54,3 +54,36 @@ jobs:
               repo: context.repo.repo,
               body: 'Thanks for opening this issue, @${{ github.actor }}! A contributor should be by to address your issue soon.'
             })
+
+  # Run the deployment workflow when the issue title starts with '[Deploy]'
+  deploy-set-parameters:
+    runs-on: ubuntu-latest
+    name: Set Parameters
+    if: startsWith(github.event.issue.title, '[Deploy]')
+    outputs:
+      environment: ${{ fromJson(steps.set-parameters.outputs.result).environment }}
+      version: ${{ fromJson(steps.set-parameters.outputs.result).version }}
+    steps:
+      - name: Set Parameters
+        id: set-parameters
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let issueBody = context.payload.issue.body;
+            let version = issueBody.match(/(?<=Version: ).*/g);
+            let environment = issueBody.match(/### Environments\n((.|\n)*)###/g)[0].match(/(?<=- \[x\] ).*/g);
+            environment = environment.map(env => env.toLowerCase());
+
+            let result = {
+              environment: environment.join(','),
+              version: version ? version[0] : 'main'
+            };
+
+            return result;
+
+  deploy-run:
+    needs: deploy-set-parameters
+    uses: ./.github/workflows/run-deploy.yml
+    with:
+      environment: ${{ needs.deploy-set-parameters.outputs.environment }}
+      version: ${{ needs.deploy-set-parameters.outputs.version }}
