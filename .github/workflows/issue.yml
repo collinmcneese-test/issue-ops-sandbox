@@ -1,105 +1,63 @@
-# This is an example GitHub Actions workflow that will trigger when an issue is opened.
-# When the issue is opened, this workflow will:
-#   - Assign the issue to the person who opened it
-#   - Add a label
-#   - Comment on the issue with an @mention to the person who created the issue
-
-name: New issue
+name: Adjust file configuration
 
 on:
   issues:
-    types: [opened, reopened]
+    types: opened
+  issue_comment:
+    types: created
 
 jobs:
-  new-issue-bug:
-    if: startsWith(github.event.issue.title, '[Bug]') || contains(github.event.issue.labels.*.name, 'bug')
+  greet:
+    name: Greet with info
     runs-on: ubuntu-latest
-
-    permissions:
-      issues: write
-
+    if: github.event.issue && startsWith(github.event.issue.title, 'Config')
     steps:
-      - name: Assign to issue creator
+      - name: fetch
+        id: fetch-current-state
+        run: echo "current=blah" >> "$GITHUB_OUTPUT"
+      - name: comment with current
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.rest.issues.addAssignees({
+            github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              assignees: ['${{ github.actor }}']
+              body: `Current state: ${process.env.current}.\n If you wish to change this, comment with '.config set <new state>'`
             })
-
-      - name: Add label
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.addLabels({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: ['bug']
-            })
-
-      - name: Comment
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Thanks for opening this issue, @${{ github.actor }}! A contributor should be by to address your issue soon.'
-            })
-
-  # Run the deployment workflow when the issue title starts with '[Deploy]'
-  deploy-set-parameters:
+  config:
+    if: github.event.comment && startsWith(github.event.comment.body, '.config set')
+    name: Set config
     runs-on: ubuntu-latest
-    name: Set Parameters
-    if: startsWith(github.event.issue.title, '[Deploy]')
-    outputs:
-      environment: ${{ fromJson(steps.set-parameters.outputs.result).environment }}
-      version: ${{ fromJson(steps.set-parameters.outputs.result).version }}
     steps:
-      # Drop a comment in the issue with a link to the Actions workflow run
-      - name: Start Comment
+      - name: parse-config-value
+        id: parse-config-value
+        run: |
+          value=$(echo "$GITHUB_EVENT_COMMENT_BODY" | sed -e 's/\.config set //')
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+      - name: ssh and apply
+        run: echo "this is where ssh would happen or api call to set a value to ${{ steps.parse-config-value.outputs.value }}"
+      - name: Comment back to user
         uses: actions/github-script@v6
         with:
           script: |
-            github.rest.issues.createComment({
+            github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Deployment started.'
+              body: `Config set to ${process.env.value}`
             })
-
-      - name: Set Parameters
-        id: set-parameters
+  failure:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: comment with error
         uses: actions/github-script@v6
         with:
           script: |
-            let issueBody = context.payload.issue.body;
-            console.log(issueBody);
-            let version = issueBody.match(/(?<=Version: ).*/g);
-            //let environment = issueBody.match(/### Environments\n((.|\n)*)###/g)[0].match(/(?<=- \[x\] ).*/g);
-            //environment = environment.map(env => env.toLowerCase());
-
-            //console.log(`environment: ${environment}`);
-
-            let result = {
-              environment: 'development,staging',
-              version: 'main'
-            };
-
-            console.log(result);
-            return result;
-
-  deploy-run:
-    needs: deploy-set-parameters
-    uses: ./.github/workflows/run-deploy.yml
-    with:
-      environment: ${{ needs.deploy-set-parameters.outputs.environment }}
-      version: ${{ needs.deploy-set-parameters.outputs.version }}
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Something went wrong. Please try again.`
+            })
