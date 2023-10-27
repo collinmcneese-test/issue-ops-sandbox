@@ -69,7 +69,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            //let issueBody = context.payload.issue.body;
+            let issueBody = context.payload.issue.body;
+            console.log(issueBody);
             //let version = issueBody.match(/(?<=Version: ).*/g);
             //let environment = issueBody.match(/### Environments\n((.|\n)*)###/g)[0].match(/(?<=- \[x\] ).*/g);
             //environment = environment.map(env => env.toLowerCase());
