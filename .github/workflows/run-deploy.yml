@@ -1,16 +1,13 @@
 name: Run Deployment
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       environment:
         description: |
           Environment(s) to deploy to.  This can be a single string or a comma separated list of environments.
-        type: choice
-        options:
-          - development
-          - staging
-          - production
+        type: string
+        required: true
       version:
         description: 'Version to deploy'
         type: string
@@ -25,9 +22,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Development"
+          echo "Deploying version ${{ github.event.issue.body }}"
 
   deploy-to-staging:
     name: Deploy to Staging
@@ -37,9 +37,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Staging"
+          echo "Deploying version ${{ github.event.issue.body }}"
 
   deploy-to-prod:
     name: Deploy to Production
@@ -49,6 +52,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Production"
+          echo "Deploying version ${{ github.event.issue.body }}"
