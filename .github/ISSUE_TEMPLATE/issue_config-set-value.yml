@@ -1,0 +1,31 @@
+name: Config Value Update
+description: Used to update config values for important system
+title: "Config <title>"
+labels: ["Config"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please use this form to submit a config value update.  Once submitted, the current value will be fetched.
+      To make changes to the current value, interact with this issue with `.config set <my-new-value>`
+
+      ```mermaid
+      graph LR
+        A[Submit Issue] --> B{Config Value}
+        B --> C{Update Value}
+        C --> D[Submit PR]
+      ```
+
+- type: dropdown
+  attributes:
+    label: What environment should this read from?
+    description: Select the environment
+    options:
+      - Development
+      - Staging
+      - Production
+
+- type: textarea
+  attributes:
+    label: What is the new value?
+    description: Describe the new value
