@@ -33,8 +33,8 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: ${{ github.event.issue.number }},
-              owner: ${{ github.event.repository.owner.login }},
-              repo: ${{ github.event.repository.name }},
+              owner: '${{ github.event.repository.owner.login }}',
+              repo: '${{ github.event.repository.name }}',
               body: 'Deployment to Development is complete.'
             })
 
@@ -57,8 +57,8 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: ${{ github.event.issue.number }},
-              owner: ${{ github.event.repository.owner.login }},
-              repo: ${{ github.event.repository.name }},
+              owner: '${{ github.event.repository.owner.login }}',
+              repo: '${{ github.event.repository.name }}',
               body: 'Deployment to Staging is complete.'
             })
 
@@ -81,7 +81,7 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: ${{ github.event.issue.number }},
-              owner: ${{ github.event.repository.owner.login }},
-              repo: ${{ github.event.repository.name }},
+              owner: '${{ github.event.repository.owner.login }}',
+              repo: '${{ github.event.repository.name }}',
               body: 'Deployment to Production is complete.'
             })
