@@ -1,6 +1,6 @@
 name: Config Value Update
 description: Used to update config values for important system
-title: "Config <title>"
+title: "[Config] <title>"
 labels: ["Config"]
 body:
 - type: markdown
@@ -8,13 +8,6 @@ body:
     value: |
       Please use this form to submit a config value update.  Once submitted, the current value will be fetched.
       To make changes to the current value, interact with this issue with `.config set <my-new-value>`
-
-      ```mermaid
-      graph LR
-        A[Submit Issue] --> B{Config Value}
-        B --> C{Update Value}
-        C --> D[Submit PR]
-      ```
 
 - type: dropdown
   attributes:
@@ -27,5 +20,5 @@ body:
 
 - type: textarea
   attributes:
-    label: What is the new value?
-    description: Describe the new value
+    label: Why is this value being updated?
+    description: Describe the new value and why it is being updated
