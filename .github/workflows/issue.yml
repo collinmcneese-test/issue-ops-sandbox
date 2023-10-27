@@ -80,6 +80,7 @@ jobs:
               version: 'main'
             };
 
+            console.log(result);
             return result;
 
   deploy-run:
