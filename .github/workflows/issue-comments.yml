@@ -1,0 +1,22 @@
+name: Parse Issue Comments
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  deploy-comment-dev:
+    if: github.event.comment.body == '.deploy dev' || github.event.comment.body == '.deploy development'
+    uses: ./.github/workflows/run-deploy.yml
+    with:
+      environment: development
+  deploy-comment-staging:
+    if: github.event.comment.body == '.deploy staging' || github.event.comment.body == '.deploy stage'
+    uses: ./.github/workflows/run-deploy.yml
+    with:
+      environment: staging
+  deploy-comment-prod:
+    if: github.event.comment.body == '.deploy prod' || github.event.comment.body == '.deploy production'
+    uses: ./.github/workflows/run-deploy.yml
+    with:
+      environment: production
