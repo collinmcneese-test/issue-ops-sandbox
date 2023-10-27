@@ -76,7 +76,7 @@ jobs:
 
             let result = {
               environment: environment.join(','),
-              version: version ? version[0] : 'main'
+              version: 'main'
             };
 
             return result;
