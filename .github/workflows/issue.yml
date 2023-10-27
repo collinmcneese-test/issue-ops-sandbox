@@ -73,7 +73,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Deployment started. See the workflow run here: ' + context.payload.workflow_run.html_url
+              body: 'Deployment started.'
             })
 
       - name: Set Parameters
@@ -96,6 +96,7 @@ jobs:
 
             console.log(result);
             return result;
+
 
   deploy-run:
     needs: deploy-set-parameters

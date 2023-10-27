@@ -5,6 +5,19 @@ on:
     types: [created]
 
 jobs:
+  respond-to-user:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Start Comment
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Thanks for the comment!  Checking in now...'
+          })
   deploy-comment-dev:
     if: github.event.comment.body == '.deploy dev' || github.event.comment.body == '.deploy development'
     uses: ./.github/workflows/run-deploy.yml
