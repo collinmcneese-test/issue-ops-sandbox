@@ -7,10 +7,76 @@ on:
     types: created
 
 jobs:
+  new-issue-bug:
+    if: github.event_name == 'issues' && startsWith(github.event.issue.title, '[Bug]')
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Assign to issue creator
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addAssignees({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              assignees: ['${{ github.actor }}']
+            })
+      - name: Add label
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['bug']
+            })
+      - name: Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Thanks for opening this issue, @${{ github.actor }}! A contributor should be by to address your issue soon.'
+            })
+
+  # Run the deployment workflow when the issue title starts with '[Deploy]'
+  deploy-set-parameters:
+    runs-on: ubuntu-latest
+    name: Set Parameters
+    if: startsWith(github.event.issue.title, '[Deploy]')
+    outputs:
+      environment: ${{ fromJson(steps.set-parameters.outputs.result).environment }}
+      version: ${{ fromJson(steps.set-parameters.outputs.result).version }}
+    steps:
+      - name: Set Parameters
+        id: set-parameters
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let issueBody = context.payload.issue.body;
+            let version = issueBody.match(/(?<=Version: ).*/g);
+            let environment = issueBody.match(/### Environments\n((.|\n)*)###/g)[0].match(/(?<=- \[x\] ).*/g);
+            environment = environment.map(env => env.toLowerCase());
+            let result = {
+              environment: environment.join(','),
+              version: version ? version[0] : 'main'
+            };
+            return result;
+
   greet:
     name: Greet with info
     runs-on: ubuntu-latest
-    if: github.event.issue && startsWith(github.event.issue.title, 'Config')
+    if: github.event_name == 'issues' && startsWith(github.event.issue.title, '[Config]')
     steps:
       - name: fetch
         id: fetch-current-state
@@ -25,8 +91,9 @@ jobs:
               repo: context.repo.repo,
               body: `Current state: ${{ steps.fetch-current-state.outputs.current }}.\n If you wish to change this, comment with '.config set <new state>'`
             })
+
   config:
-    if: github.event.comment && startsWith(github.event.comment.body, '.config set')
+    if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '.config set')
     name: Set config
     runs-on: ubuntu-latest
     steps:
@@ -59,14 +126,10 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Config set to ${process.env.value}`
+              body: `Config set to ${{ steps.validate-value.outputs.value }}`
             })
-  failure:
-    needs: [greet, config]
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
       - name: comment with error
+        if: ${{ failure() }}
         uses: actions/github-script@v6
         with:
           script: |
