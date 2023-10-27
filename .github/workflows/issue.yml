@@ -23,7 +23,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Current state: ${process.env.current}.\n If you wish to change this, comment with '.config set <new state>'`
+              body: `Current state: ${{ steps.fetch-current-state.outputs.current }}.\n If you wish to change this, comment with '.config set <new state>'`
             })
   config:
     if: github.event.comment && startsWith(github.event.comment.body, '.config set')
