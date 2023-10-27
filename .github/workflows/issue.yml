@@ -33,10 +33,24 @@ jobs:
       - name: parse-config-value
         id: parse-config-value
         run: |
-          value=$(echo "$GITHUB_EVENT_COMMENT_BODY" | sed -e 's/\.config set //')
+          value=$(echo "${{ github.event.comment.body }}" | sed -e 's/\.config set //')
           echo "value=$value" >> "$GITHUB_OUTPUT"
+      - name: validate value
+        id: validate-value
+        env:
+          stepvalue: ${{ steps.parse-config-value.outputs.value }}
+        run: |
+          testvalue="${{ env.stepvalue }}"
+          # make sure that the testvalue is valid and safe (does not contain spaces, etc)
+          if [[ $testvalue =~ ^[a-zA-Z0-9]+$ ]]; then
+            echo "value=$testvalue" >> "$GITHUB_OUTPUT"
+          else
+            echo "invalid value set: $testvalue"
+            exit 1
+          fi
+
       - name: ssh and apply
-        run: echo "this is where ssh would happen or api call to set a value to ${{ steps.parse-config-value.outputs.value }}"
+        run: echo "this is where ssh would happen or api call to set a value to ${{ steps.validate-value.outputs.value }}"
       - name: Comment back to user
         uses: actions/github-script@v6
         with:
