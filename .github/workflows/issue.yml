@@ -59,7 +59,7 @@ jobs:
   deploy-set-parameters:
     runs-on: ubuntu-latest
     name: Set Parameters
-    if: startsWith(github.event.issue.title, '[Deploy]') || contains(github.event.issue.labels.*.name, 'deploy')
+    if: startsWith(github.event.issue.title, '[Deploy]')
     outputs:
       environment: ${{ fromJson(steps.set-parameters.outputs.result).environment }}
       version: ${{ fromJson(steps.set-parameters.outputs.result).version }}
