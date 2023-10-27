@@ -1,4 +1,4 @@
-name: Adjust file configuration
+name: Issues Workflow
 
 on:
   issues:
@@ -59,6 +59,18 @@ jobs:
       environment: ${{ steps.set-parameters.outputs.environment }}
       version: ${{ steps.set-parameters.outputs.version }}
     steps:
+      - name: Start Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Thanks for opening this issue, @${{ github.actor }}! Please wait while we set up your deployment.'
+            })
+
       - name: Set Parameters
         id: set-parameters
         uses: actions/github-script@v6
