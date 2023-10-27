@@ -27,7 +27,16 @@ jobs:
       - name: Run Deployment
         run: |
           echo "Deploying to Development"
-          echo "Deploying version ${{ github.event.issue.body }}"
+      - name: Comment to issue when done
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: ${{ github.event.issue.number }},
+              owner: ${{ github.event.repository.owner.login }},
+              repo: ${{ github.event.repository.name }},
+              body: 'Deployment to Development is complete.'
+            })
 
   deploy-to-staging:
     name: Deploy to Staging
@@ -42,7 +51,16 @@ jobs:
       - name: Run Deployment
         run: |
           echo "Deploying to Staging"
-          echo "Deploying version ${{ github.event.issue.body }}"
+      - name: Comment to issue when done
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: ${{ github.event.issue.number }},
+              owner: ${{ github.event.repository.owner.login }},
+              repo: ${{ github.event.repository.name }},
+              body: 'Deployment to Staging is complete.'
+            })
 
   deploy-to-prod:
     name: Deploy to Production
@@ -57,4 +75,13 @@ jobs:
       - name: Run Deployment
         run: |
           echo "Deploying to Production"
-          echo "Deploying version ${{ github.event.issue.body }}"
+      - name: Comment to issue when done
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: ${{ github.event.issue.number }},
+              owner: ${{ github.event.repository.owner.login }},
+              repo: ${{ github.event.repository.name }},
+              body: 'Deployment to Production is complete.'
+            })
