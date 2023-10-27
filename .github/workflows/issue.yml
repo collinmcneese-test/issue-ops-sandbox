@@ -97,7 +97,6 @@ jobs:
             console.log(result);
             return result;
 
-
   deploy-run:
     needs: deploy-set-parameters
     uses: ./.github/workflows/run-deploy.yml

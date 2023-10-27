@@ -30,6 +30,16 @@ jobs:
       environment: staging
   deploy-comment-prod:
     if: github.event.comment.body == '.deploy prod' || github.event.comment.body == '.deploy production'
-    uses: ./.github/workflows/run-deploy.yml
-    with:
-      environment: production
+    runs-on: ubuntu-latest
+    steps:
+      # Require approval from a code owner to deploy to production
+      - name: Comment that approval is needed
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Thanks for the comment!  It looks like you are trying to deploy to production.  Please wait for a code owner to approve this request. @collinmcneese please approve'
+            })
