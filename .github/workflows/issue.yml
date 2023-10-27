@@ -1,0 +1,56 @@
+# This is an example GitHub Actions workflow that will trigger when an issue is opened.
+# When the issue is opened, this workflow will:
+#   - Assign the issue to the person who opened it
+#   - Add a label
+#   - Comment on the issue with an @mention to the person who created the issue
+
+name: New issue
+
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  new-issue-bug:
+    if: startsWith(github.event.issue.title, '[Bug]') || contains(github.event.issue.labels.*.name, 'bug')
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Assign to issue creator
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addAssignees({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              assignees: ['${{ github.actor }}']
+            })
+
+      - name: Add label
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['bug']
+            })
+
+      - name: Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Thanks for opening this issue, @${{ github.actor }}! A contributor should be by to address your issue soon.'
+            })
