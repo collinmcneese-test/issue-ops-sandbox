@@ -64,6 +64,18 @@ jobs:
       environment: ${{ fromJson(steps.set-parameters.outputs.result).environment }}
       version: ${{ fromJson(steps.set-parameters.outputs.result).version }}
     steps:
+      # Drop a comment in the issue with a link to the Actions workflow run
+      - name: Start Comment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Deployment started. See the workflow run here: ' + context.payload.workflow_run.html_url
+            })
+
       - name: Set Parameters
         id: set-parameters
         uses: actions/github-script@v6
