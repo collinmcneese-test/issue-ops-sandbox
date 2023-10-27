@@ -62,6 +62,7 @@ jobs:
               body: `Config set to ${process.env.value}`
             })
   failure:
+    needs: [greet, config]
     if: failure()
     runs-on: ubuntu-latest
     steps:
