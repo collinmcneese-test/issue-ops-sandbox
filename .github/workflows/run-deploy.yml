@@ -21,14 +21,14 @@ jobs:
     environment: Development
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Development"
       - name: Comment to issue when done
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
@@ -45,14 +45,14 @@ jobs:
     environment: Staging
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Staging"
       - name: Comment to issue when done
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
@@ -69,14 +69,14 @@ jobs:
     environment: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Run Deployment
         run: |
           echo "Deploying to Production"
       - name: Comment to issue when done
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
