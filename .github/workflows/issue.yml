@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Assign to issue creator
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -27,7 +27,7 @@ jobs:
               assignees: ['${{ github.actor }}']
             })
       - name: Add label
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -38,7 +38,7 @@ jobs:
               labels: ['bug']
             })
       - name: Comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -60,7 +60,7 @@ jobs:
       version: ${{ steps.set-parameters.outputs.version }}
     steps:
       - name: Start Comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -73,7 +73,7 @@ jobs:
 
       - name: Set Parameters
         id: set-parameters
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             let issueBody = context.payload.issue.body;
@@ -134,7 +134,7 @@ jobs:
         id: fetch-current-state
         run: echo "current=blah" >> "$GITHUB_OUTPUT"
       - name: comment with current
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
@@ -171,7 +171,7 @@ jobs:
       - name: ssh and apply
         run: echo "this is where ssh would happen or api call to set a value to ${{ steps.validate-value.outputs.value }}"
       - name: Comment back to user
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
@@ -182,7 +182,7 @@ jobs:
             })
       - name: comment with error
         if: ${{ failure() }}
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           script: |
             github.rest.issues.createComment({
